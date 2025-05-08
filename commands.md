@@ -27,3 +27,16 @@ Build the application and embed the version information as a variable. The `-ldf
 ```bash
 go build -ldflags "-X=github.com/deniszm/obot/cmd.appVersion=v1.0.0"
 ```
+
+## Format Code
+Format the Go code in the project to ensure consistency and readability.
+```bash
+gofmt -s -w ./
+```
+
+## Download Dependencies
+Download and install the dependencies required for the project.
+```bash
+go get
+```
+
