@@ -1,24 +1,29 @@
-## Init go module
+## Initialize Go Module
+Initialize a new Go module for the project.
 ```bash
 go mod init github.com/deniszm/obot
 ```
 
-## Install cobra cli
+## Install Cobra CLI
+Install the Cobra CLI tool for generating and managing commands in a Go application.
 ```bash
 go install github.com/spf13/cobra-cli@latest
 ```
 
-## Scaffold application
+## Scaffold Application
+Create the initial structure of the application using Cobra CLI.
 ```bash
 cobra-cli init
 ```
 
-## Genarate "version" command code
-```
+## Generate "Version" Command Code
+Add a "version" command to the application using Cobra CLI.
+```bash
 cobra-cli add version
 ```
 
-## Build application with defined variable
+## Build Application with Version Variable
+Build the application and embed the version information as a variable. The `-ldflags` option is used to pass linker flags to the Go compiler. In this case, the `-X` flag sets the value of the `appVersion` variable in the `github.com/deniszm/obot/cmd` package to `v1.0.0`.
 ```bash
 go build -ldflags "-X=github.com/deniszm/obot/cmd.appVersion=v1.0.0"
 ```
