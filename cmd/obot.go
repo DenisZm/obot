@@ -86,7 +86,7 @@ func calculateSubnetInfo(cidrInput string) (string, error) {
 	// Parse CIDR notation
 	ip, ipNet, err := net.ParseCIDR(cidrInput)
 	if err != nil {
-		return "", fmt.Errorf("Invalid IP/CIDR format: %v", err)
+		return "", fmt.Errorf("invalid IP/CIDR format: %v", err)
 	}
 
 	// Calculate subnet mask in dotted decimal format
@@ -118,7 +118,7 @@ func calculateSubnetInfo(cidrInput string) (string, error) {
 		// Convert network address to 4-byte representation
 		ip4 := ipNet.IP.To4()
 		if ip4 == nil {
-			return "", fmt.Errorf("Invalid IP address format")
+			return "", fmt.Errorf("invalid IP address format")
 		}
 
 		// First usable IP is network address + 1
