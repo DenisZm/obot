@@ -23,9 +23,9 @@ cobra-cli add version
 ```
 
 ## Build Application with Version Variable
-Build the application and embed the version information as a variable. The `-ldflags` option is used to pass linker flags to the Go compiler. In this case, the `-X` flag sets the value of the `appVersion` variable in the `github.com/deniszm/obot/cmd` package to `v1.0.0`.
+Build the application and embed the version information as a variable. The `-ldflags` option is used to pass linker flags to the Go compiler. In this case, the `-X` flag sets the value of the `appVersion` variable in the `github.com/deniszm/obot/cmd` package to `v1.1.0`.
 ```bash
-go build -ldflags "-X=github.com/deniszm/obot/cmd.appVersion=v1.0.0"
+go build -ldflags "-X=github.com/deniszm/obot/cmd.appVersion=v1.1.0"
 ```
 
 ## Format Code
