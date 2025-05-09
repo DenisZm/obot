@@ -40,3 +40,9 @@ Download and install the dependencies required for the project.
 go get
 ```
 
+## Securely Set Environment Variable
+Securely set the `TELE_TOKEN` environment variable by reading it as a hidden input and exporting it for use in the application.
+```bash
+read -s TELE_TOKEN
+export TELE_TOKEN
+```
