@@ -20,10 +20,10 @@ var (
 
 // obotCmd represents the obot command
 var obotCmd = &cobra.Command{
-	Use:     "obot",
-	Aliases: []string{"start"},
+	Use:     "start",
+	Aliases: []string{"obot"},
 	Short:   "Start the DevOps Helper Telegram Bot",
-	Long:    `The "obot" command initializes and starts the DevOps Helper Telegram Bot.`,
+	Long:    `The "start" command initializes and starts the DevOps Helper Telegram Bot.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("obot %s started\n", appVersion)
 
@@ -37,16 +37,9 @@ var obotCmd = &cobra.Command{
 			log.Fatalf("Please check TELE_TOKEN env variable. %s", err)
 		}
 
-		obot.Handle(telebot.OnText, func(m telebot.Context) error {
-			log.Print(m.Message().Payload, m.Text())
-
-			payload := m.Message().Payload
-			switch payload {
-			case "hello":
-				err = m.Send(fmt.Sprintf("Hello, I'm Obot %s!", appVersion))
-			}
-
-			return err
+		obot.Handle("/hello", func(m telebot.Context) error {
+			log.Printf("Received command: /hello")
+			return m.Send(fmt.Sprintf("Hello, I'm Obot %s!", appVersion))
 		})
 
 		obot.Start()
