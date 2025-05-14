@@ -64,6 +64,21 @@ Example:
 /subnet 192.168.0.1/24
 ```
 
+## Docker image build for different platforms
+
+To build the Docker image for ARM64 platform, use the following command:
+
+```sh
+docker buildx build \
+  --platform linux/arm64 \
+  --tag ghcr.io/deniszm/obot:1.0.0-arm \
+  --build-arg VERSION=1.0.0 \
+  --load \
+  .
+```
+
+You can change the `--platform` and `--tag` values to build for other platforms and versions.
+
 ## Contact
 
 - Telegram Bot: [t.me/deniszm_obot](https://t.me/deniszm_obot)
