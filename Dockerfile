@@ -6,7 +6,9 @@ ARG VERSION
 WORKDIR /app
 COPY . .
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o obot -ldflags "-s -w -X=github.com/deniszm/obot/cmd.appVersion=${VERSION}"
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go build -o obot \
+    -ldflags "-s -w -X=github.com/deniszm/obot/cmd.appVersion=${VERSION}"
 
 FROM alpine:latest AS runner
 WORKDIR /app
