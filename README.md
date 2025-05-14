@@ -52,6 +52,16 @@ export TELE_TOKEN="your_bot_token"
 ./obot start
 ```
 
+## Running the Container
+
+To run the built Docker image, use the following command (replace `telegrab_bot_token` with your actual Telegram bot token):
+
+```sh
+docker run -e TELE_TOKEN=telegrab_bot_token ghcr.io/deniszm/obot:v1.1.0-bbce448-arm64
+```
+
+You can use the appropriate image tag for your platform (e.g., `-amd64` or `-arm64`).
+
 ## Usage
 
 After starting the bot, you can interact with it on Telegram using the following commands:
@@ -78,6 +88,74 @@ docker buildx build \
 ```
 
 You can change the `--platform` and `--tag` values to build for other platforms and versions.
+
+## Building and Publishing Docker Images with Make
+
+You can use the provided Makefile to build and publish Docker images for both x86 (amd64) and ARM (arm64) platforms.
+
+### Build images
+
+- Build for x86 (amd64):
+  ```sh
+  make image-x86
+  ```
+- Build for ARM (arm64):
+  ```sh
+  make image-arm
+  ```
+- Build both images:
+  ```sh
+  make all
+  ```
+
+### Publish images
+
+- Push x86 (amd64) image to registry:
+  ```sh
+  make push-x86
+  ```
+- Push ARM (arm64) image to registry:
+  ```sh
+  make push-arm
+  ```
+
+### Clean up local images
+
+- Remove both images from local Docker:
+  ```sh
+  make clean
+  ```
+
+The image tags are generated automatically from the latest git tag and commit hash.
+
+## Building Binaries for Different Platforms
+
+You can build the application binaries for various platforms and architectures using the provided Makefile. The resulting binaries will be placed in the `build/` directory.
+
+### Build commands:
+
+- Build for Linux x86_64:
+  ```sh
+  make build-linux-x86
+  ```
+- Build for Linux ARM64:
+  ```sh
+  make build-linux-arm
+  ```
+- Build for macOS x86_64:
+  ```sh
+  make build-darwin-x86
+  ```
+- Build for macOS ARM64 (Apple Silicon):
+  ```sh
+  make build-darwin-arm
+  ```
+- Build for Windows x86_64:
+  ```sh
+  make build-windows-x86
+  ```
+
+All builds are performed inside a Docker container, so Go does not need to be installed locally.
 
 ## Contact
 
