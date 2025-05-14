@@ -12,7 +12,7 @@ all: image-x86 image-arm
 
 # Default image build for current host architecture
 image:
-	docker buildx build . \
+	docker build . \
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
 	  --build-arg VERSION=$(VERSION) \
@@ -20,7 +20,7 @@ image:
 	  --load
 
 image-x86:
-	docker buildx build . \
+	docker build . \
 	  --platform linux/amd64 \
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=amd64 \
@@ -29,7 +29,7 @@ image-x86:
 	  --load
 
 image-arm:
-	docker buildx build . \
+	docker build . \
 	  --platform linux/arm64 \
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=arm64 \
