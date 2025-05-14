@@ -6,8 +6,18 @@ BUILD_DIR=build
 
 .PHONY: all image-x86 image-arm push-x86 push-arm clean
 .PHONY: build-linux-x86 build-linux-arm build-darwin-x86 build-darwin-arm build-windows-x86
+.PHONY: image
 
 all: image-x86 image-arm
+
+# Default image build for current host architecture
+image:
+	docker buildx build . \
+	  --build-arg TARGETOS=linux \
+	  --build-arg TARGETARCH=$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+	  --build-arg VERSION=$(VERSION) \
+	  --tag $(REGESTRY)/obot:$(VERSION)-$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+	  --load
 
 image-x86:
 	docker buildx build . \
