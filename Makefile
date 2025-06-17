@@ -1,5 +1,5 @@
-REGISTRY := ghcr.io/deniszm
-VERSION := $(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
+REGISTRY ?= ghcr.io/deniszm
+VERSION ?= $(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
 
 BIN_NAME = obot
 BUILD_DIR = build
