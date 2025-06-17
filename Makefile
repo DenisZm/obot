@@ -1,8 +1,8 @@
-REGISTRY=ghcr.io/deniszm
-VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
+REGISTRY := ghcr.io/deniszm
+VERSION := $(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
 
-BIN_NAME=obot
-BUILD_DIR=build
+BIN_NAME = obot
+BUILD_DIR = build
 
 .PHONY: all image-x86 image-arm push-x86 push-arm clean test
 .PHONY: build-linux-x86 build-linux-arm build-darwin-x86 build-darwin-arm build-windows-x86
@@ -72,4 +72,3 @@ clean:
 	docker rmi $(REGISTRY)/obot:$(VERSION)-amd64 || true
 	docker rmi $(REGISTRY)/obot:$(VERSION)-arm64 || true
 	rm -rf $(BUILD_DIR)
-
