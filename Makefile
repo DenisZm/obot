@@ -1,6 +1,5 @@
 REGESTRY=ghcr.io/deniszm
-TAG=$(shell git describe --tags --abbrev=0)
-VERSION=${TAG}-$(shell git rev-parse HEAD|cut -c1-7)
+VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
 
 BIN_NAME=obot
 BUILD_DIR=build
@@ -17,7 +16,7 @@ image:
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(TAG)-$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+	  --tag $(REGESTRY)/obot:$(VERSION)-$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
 	  --load
 
 image-x86:
@@ -26,7 +25,7 @@ image-x86:
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=amd64 \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(TAG)-amd64 \
+	  --tag $(REGESTRY)/obot:$(VERSION)-amd64 \
 	  --load
 
 image-arm:
@@ -35,14 +34,14 @@ image-arm:
 	  --build-arg TARGETOS=linux \
 	  --build-arg TARGETARCH=arm64 \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(TAG)-arm64 \
+	  --tag $(REGESTRY)/obot:$(VERSION)-arm64 \
 	  --load
 
 push-x86:
-	docker push $(REGESTRY)/obot:$(TAG)-amd64
+	docker push $(REGESTRY)/obot:$(VERSION)-amd64
 
 push-arm:
-	docker push $(REGESTRY)/obot:$(TAG)-arm64
+	docker push $(REGESTRY)/obot:$(VERSION)-arm64
 
 build-linux-x86:
 	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
