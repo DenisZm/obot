@@ -4,11 +4,16 @@ VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -
 BIN_NAME=obot
 BUILD_DIR=build
 
-.PHONY: all image-x86 image-arm push-x86 push-arm clean
+.PHONY: all image-x86 image-arm push-x86 push-arm clean test
 .PHONY: build-linux-x86 build-linux-arm build-darwin-x86 build-darwin-arm build-windows-x86
 .PHONY: image
 
 all: image-x86 image-arm
+
+# Run tests
+test:
+	@echo "Running tests..."
+	@go test -v -cover ./...
 
 # Default image build for current host architecture
 image:
