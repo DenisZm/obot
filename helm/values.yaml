@@ -10,7 +10,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.1.3-d2906c0
+  tag: v1.1.4-3703072
   arch: amd64
 # TELE_TOKEN configuration
 secret:
