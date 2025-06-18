@@ -7,6 +7,7 @@ RUN go mod download
 RUN make build TARGETARCH=$TARGETARCH
 
 FROM alpine:latest AS runner
+ARG TARGETARCH
 WORKDIR /app
 COPY --from=builder /app/build/obot-linux-$TARGETARCH ./obot
 RUN chmod +x obot
