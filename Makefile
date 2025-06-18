@@ -3,13 +3,13 @@ VERSION ?= $(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cu
 HOST_ARCH = $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
 
 TARGETOS ?= linux
-TARGETARCH ?= arm64
+TARGETARCH ?= amd64
 CGO_ENABLED ?= 0
 
 BIN_NAME = obot
 BUILD_DIR = build
 
-.PHONY: all clean test image image-host-arch push build build-local
+.PHONY: all clean test image image-host-arch push build build-in-docker
 
 all: test build image
 
@@ -18,7 +18,7 @@ test:
 	@echo "Running tests..."
 	@go test -v -cover ./...
 
-build:
+build-in-docker:
 	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
 	  /bin/sh -c 'GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) CGO_ENABLED=$(CGO_ENABLED) \
 	    go build \
@@ -27,7 +27,7 @@ build:
 	      main.go'
 
 # Local build without Docker (for use in Dockerfile)
-build-local:
+build:
 	mkdir -p $(BUILD_DIR)
 	GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) CGO_ENABLED=$(CGO_ENABLED) \
 	  go build \
