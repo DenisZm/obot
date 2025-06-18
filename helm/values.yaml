@@ -6,11 +6,13 @@
 replicaCount: 1
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/deniszm/obot
+  registry: "ghcr.io"
+  repository: "deniszm/obot"
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: v1.1.4-3703072
+  os: linux
   arch: amd64
 # TELE_TOKEN configuration
 secret:

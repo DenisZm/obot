@@ -40,7 +40,7 @@ image:
 	  --platform $(TARGETOS)/$(TARGETARCH) \
 	  --build-arg TARGETARCH=$(TARGETARCH) \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETARCH) \
+	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH) \
 	  --load
 
 # Default image build for current host architecture
@@ -48,12 +48,16 @@ image-host-arch:
 	docker build . \
 	  --build-arg TARGETARCH=$(HOST_ARCH) \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGISTRY)/obot:$(VERSION)-$(HOST_ARCH) \
+image-host-arch:
+	docker build . \
+	  --build-arg TARGETARCH=$(HOST_ARCH) \
+	  --build-arg VERSION=$(VERSION) \
+	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(HOST_ARCH) \
 	  --load
 
 push:
-	docker push $(REGISTRY)/obot:$(VERSION)-$(TARGETARCH)
+	docker push $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH)
 
 clean:
-	docker rmi $(REGISTRY)/obot:$(VERSION)-$(TARGETARCH) || true
+	docker rmi $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH) || true
 	rm -rf $(BUILD_DIR)
