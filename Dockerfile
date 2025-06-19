@@ -7,6 +7,7 @@ RUN go mod download
 RUN make build TARGETARCH=$TARGETARCH
 
 FROM scratch
+ARG TARGETARCH
 WORKDIR /
 COPY --from=builder /app/build/obot-linux-$TARGETARCH ./obot
 COPY --from=alpine:latest /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
