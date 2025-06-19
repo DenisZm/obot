@@ -48,10 +48,6 @@ image-host-arch:
 	docker build . \
 	  --build-arg TARGETARCH=$(HOST_ARCH) \
 	  --build-arg VERSION=$(VERSION) \
-image-host-arch:
-	docker build . \
-	  --build-arg TARGETARCH=$(HOST_ARCH) \
-	  --build-arg VERSION=$(VERSION) \
 	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(HOST_ARCH) \
 	  --load
 
