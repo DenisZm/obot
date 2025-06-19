@@ -1,50 +1,96 @@
 pipeline {
     agent any
 
+    parameters {
+        choice(
+            name: 'OS',
+            choices: ['linux', 'darwin', 'windows'],
+            description: 'Target operating system'
+        )
+        choice(
+            name: 'ARCH',
+            choices: ['arm64', 'amd64'],
+            description: 'Target architecture'
+        )
+        booleanParam(
+            name: 'SKIP_TESTS',
+            defaultValue: false,
+            description: 'Skip running tests'
+        )
+    }
+
     environment {
         REPO = "https://github.com/deniszm/obot"
         BRANCH = "main"
         REGISTRY = "deniszms"
+        CGO_ENABLED = "0"
     }
 
     stages {
-        stage('clone') {
+        stage('Parameters Info') {
+            steps {
+                echo "Build Parameters:"
+                echo "Target OS: ${params.OS}"
+                echo "Target Architecture: ${params.ARCH}"
+                echo "Skip Tests: ${params.SKIP_TESTS}"
+            }
+        }
+
+        stage('Clone') {
             steps {
                 echo "Cloning repository ${REPO} on branch ${BRANCH}"
                 git branch: "${BRANCH}", url: "${REPO}"
             }
         }
 
-        stage('test') {
+        stage('Test') {
+            when {
+                not { params.SKIP_TESTS }
+            }
             steps {
                 echo "Test execution started"
                 sh 'make test'
             }
         }
 
-        stage('build') {
+        stage('Build') {
             steps {
-                echo "Build execution started"
-                sh 'make build'
+                echo "Build execution started for ${params.OS}/${params.ARCH}"
+                sh "make TARGETOS=${params.OS} TARGETARCH=${params.ARCH} build"
             }
         }
 
-        stage('image') {
+        stage('Docker Image') {
             steps {
-                echo "Image creation started"
-                sh 'make REGISTRY=${REGISTRY} image'
+                echo "Image creation started for ${params.OS}/${params.ARCH}"
+                sh "make REGISTRY=${REGISTRY} TARGETOS=${params.OS} TARGETARCH=${params.ARCH} image"
             }
         }
 
-        stage('push') {
+        stage('Push to Registry') {
             steps {
-                echo "Pushing image to registry"
+                echo "Pushing image to registry ${REGISTRY}"
                 script {
                     docker.withRegistry('', 'dockerhub-credentials') {
-                        sh "make REGISTRY=${REGISTRY} push"
+                        sh "make REGISTRY=${REGISTRY} TARGETOS=${params.OS} TARGETARCH=${params.ARCH} push"
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed'
+            cleanWs()
+        }
+        success {
+            echo 'Build succeeded!'
+            echo "Successfully built obot for ${params.OS}/${params.ARCH}"
+        }
+        failure {
+            echo 'Build failed!'
+            echo "Failed to build obot for ${params.OS}/${params.ARCH}"
         }
     }
 }
