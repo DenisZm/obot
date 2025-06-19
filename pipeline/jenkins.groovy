@@ -45,7 +45,9 @@ pipeline {
 
         stage('Test') {
             when {
-                not { params.SKIP_TESTS }
+                expression { 
+                    return !params.SKIP_TESTS
+                }
             }
             steps {
                 echo "Test execution started"
