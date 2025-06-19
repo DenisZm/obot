@@ -1,26 +1,6 @@
 pipeline {
     agent any
 
-    properties([
-        parameters([
-            choice(
-                name: 'OS',
-                choices: ['linux', 'darwin', 'windows'],
-                description: 'Target operating system'
-            ),
-            choice(
-                name: 'ARCH',
-                choices: ['arm64', 'amd64'],
-                description: 'Target architecture'
-            ),
-            booleanParam(
-                name: 'SKIP_TESTS',
-                defaultValue: false,
-                description: 'Skip running tests'
-            )
-        ])
-    ])
-
     parameters {
         choice(
             name: 'OS',
