@@ -21,7 +21,7 @@ pipeline {
 
     environment {
         REPO = "https://github.com/deniszm/obot"
-        BRANCH = "main"
+        BRANCH = "develop"
         REGISTRY = "deniszms"
         CGO_ENABLED = "0"
     }
