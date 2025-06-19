@@ -1,6 +1,26 @@
 pipeline {
     agent any
 
+    properties([
+        parameters([
+            choice(
+                name: 'OS',
+                choices: ['linux', 'darwin', 'windows'],
+                description: 'Target operating system'
+            ),
+            choice(
+                name: 'ARCH',
+                choices: ['arm64', 'amd64'],
+                description: 'Target architecture'
+            ),
+            booleanParam(
+                name: 'SKIP_TESTS',
+                defaultValue: false,
+                description: 'Skip running tests'
+            )
+        ])
+    ])
+
     parameters {
         choice(
             name: 'OS',
@@ -78,21 +98,6 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline execution completed'
-            cleanWs()
-        }
-        success {
-            echo 'Build succeeded!'
-            echo "Successfully built obot for ${params.OS}/${params.ARCH}"
-        }
-        failure {
-            echo 'Build failed!'
-            echo "Failed to build obot for ${params.OS}/${params.ARCH}"
         }
     }
 }
