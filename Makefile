@@ -1,70 +1,63 @@
-REGESTRY=ghcr.io/deniszm
-VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
+REGISTRY ?= ghcr.io/deniszm
+VERSION ?= $(shell git describe --tags --abbrev=0)-$(shell git rev-parse HEAD|cut -c1-7)
+HOST_ARCH = $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
 
-BIN_NAME=obot
-BUILD_DIR=build
+TARGETOS ?= linux
+TARGETARCH ?= amd64
+CGO_ENABLED ?= 0
 
-.PHONY: all image-x86 image-arm push-x86 push-arm clean
-.PHONY: build-linux-x86 build-linux-arm build-darwin-x86 build-darwin-arm build-windows-x86
-.PHONY: image
+BIN_NAME = obot
+BUILD_DIR = build
 
-all: image-x86 image-arm
+.PHONY: all clean test image image-host-arch push build build-in-docker
 
-# Default image build for current host architecture
+all: test build image
+
+
+test:
+	@echo "Running tests..."
+	@go test -v -cover ./...
+
+build-in-docker:
+	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
+	  /bin/sh -c 'GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) CGO_ENABLED=$(CGO_ENABLED) \
+	    go build \
+	      -ldflags "-s -w -X=github.com/deniszm/obot/cmd.appVersion=$(VERSION)" \
+	      -o $(BUILD_DIR)/$(BIN_NAME)-$(TARGETOS)-$(TARGETARCH) \
+	      main.go'
+
+# Local build without Docker (for use in Dockerfile)
+build:
+	mkdir -p $(BUILD_DIR)
+	GOOS=$(TARGETOS) GOARCH=$(TARGETARCH) CGO_ENABLED=$(CGO_ENABLED) \
+	  go build \
+	    -ldflags "-s -w -X=github.com/deniszm/obot/cmd.appVersion=$(VERSION)" \
+	    -o $(BUILD_DIR)/$(BIN_NAME)-$(TARGETOS)-$(TARGETARCH) \
+	    main.go
+
 image:
 	docker build . \
-	  --build-arg TARGETOS=linux \
-	  --build-arg TARGETARCH=$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+	  --platform $(TARGETOS)/$(TARGETARCH) \
+	  --build-arg TARGETARCH=$(TARGETARCH) \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(VERSION)-$$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/') \
+	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH) \
 	  --load
 
-image-x86:
+# Default image build for current host architecture
+image-host-arch:
 	docker build . \
-	  --platform linux/amd64 \
-	  --build-arg TARGETOS=linux \
-	  --build-arg TARGETARCH=amd64 \
+	  --build-arg TARGETARCH=$(HOST_ARCH) \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(VERSION)-amd64 \
-	  --load
-
-image-arm:
+image-host-arch:
 	docker build . \
-	  --platform linux/arm64 \
-	  --build-arg TARGETOS=linux \
-	  --build-arg TARGETARCH=arm64 \
+	  --build-arg TARGETARCH=$(HOST_ARCH) \
 	  --build-arg VERSION=$(VERSION) \
-	  --tag $(REGESTRY)/obot:$(VERSION)-arm64 \
+	  --tag $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(HOST_ARCH) \
 	  --load
 
-push-x86:
-	docker push $(REGESTRY)/obot:$(VERSION)-amd64
-
-push-arm:
-	docker push $(REGESTRY)/obot:$(VERSION)-arm64
-
-build-linux-x86:
-	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
-	  /bin/sh -c 'GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/$(BIN_NAME)-linux-amd64 main.go'
-
-build-linux-arm:
-	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
-	  /bin/sh -c 'GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/$(BIN_NAME)-linux-arm64 main.go'
-
-build-darwin-x86:
-	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
-	  /bin/sh -c 'GOOS=darwin GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/$(BIN_NAME)-darwin-amd64 main.go'
-
-build-darwin-arm:
-	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
-	  /bin/sh -c 'GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/$(BIN_NAME)-darwin-arm64 main.go'
-
-build-windows-x86:
-	docker run --rm -v $(PWD):/src -w /src quay.io/projectquay/golang:1.24 \
-	  /bin/sh -c 'GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o $(BUILD_DIR)/$(BIN_NAME)-windows-amd64.exe main.go'
+push:
+	docker push $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH)
 
 clean:
-	docker rmi $(REGESTRY)/obot:$(VERSION)-amd64 || true
-	docker rmi $(REGESTRY)/obot:$(VERSION)-arm64 || true
+	docker rmi $(REGISTRY)/obot:$(VERSION)-$(TARGETOS)-$(TARGETARCH) || true
 	rm -rf $(BUILD_DIR)
-
